@@ -3,8 +3,6 @@
 4d63.com/tz v1.2.0/go.mod h1:SHGqVdL7hd2ZaX2T9uEiOZ/OFAUfCCLURdLPJsd8ZNs=
 git.innovasive.co.th/backend/models v0.0.0-20200923044355-3146a2ec8c5a h1:RQrAlV8a2eH3VZAiRhy1aao7GMLMfOekXACkmQc5jHA=
 git.innovasive.co.th/backend/models v0.0.0-20200923044355-3146a2ec8c5a/go.mod h1:ierVeRPJidWBhqmngovI33TfsaDjgV2g0857/vsP8zg=
-git.innovasive.co.th/dev-team/mda-api v0.0.0-20200505133914-52ba2f64e2eb h1:iH+nNHGavmN1Haaj2fPeeWQ/+UH11mOCJ0ZbF1TZRp8=
-git.innovasive.co.th/dev-team/mda-api v0.0.0-20200505133914-52ba2f64e2eb/go.mod h1:dNMSaTYwORT1jfMX8VWEE381aCk1VHA5Yj0kEzRybso=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/dgrijalva/jwt-go v3.2.0+incompatible/go.mod h1:E3ru+11k8xSBh+hMPgOLZmtrrCbhqsmaPHjLKYnJCaQ=
 github.com/globalsign/mgo v0.0.0-20181015135952-eeefdecb41b8 h1:DujepqpGd1hyOd7aW59XpK7Qymp8iy83xq74fLr21is=
