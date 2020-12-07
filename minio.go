@@ -106,6 +106,8 @@ func CreateImageFile(img image.Image, format string, filename string, desc strin
 func generateObjectName(foldername string, id string, extension string) string {
 	var date = strings.ReplaceAll(helperModel.NewDateFromTime(time.Now()).String(), "-", "")
 	var generateNumber = strconv.Itoa(rand.Intn(1000000000))
+	extension = strings.TrimPrefix(extension, ".")
+
 	foldername = func() string {
 		lastString := []rune(foldername)
 		if string(lastString) == "/" {
