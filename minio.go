@@ -191,6 +191,13 @@ func (c *Client) UploadFromFilePDF(bucketName string, foldername string, pathFil
 	return nil
 }
 
+func (c *Client) RemoveObject(bucketName string, objectName string) error {
+	if err := c.GetClient().RemoveObject(bucketName, objectName); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (c *Client) CreateBucket(bucketName string, region string) error {
 	if region == "" {
 		region = MINIO_DEFAULT_REGION
