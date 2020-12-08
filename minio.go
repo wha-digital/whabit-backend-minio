@@ -220,5 +220,8 @@ func (c *Client) GetPathImageFromURL(url string) string {
 			}
 		}
 	}
+	if path == "" {
+		return url
+	}
 	return path
 }
