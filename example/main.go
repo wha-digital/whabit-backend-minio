@@ -34,9 +34,9 @@ func SetBucketPublicPolicy(client *minio.Client, bucketName string) error {
 }
 
 func main() {
-	minioEndpoint := "saansook-s3-storage-dev.innovasive.in.th"
-	minioAccess := "ssa-dev"
-	minioSecret := "SSA#SecrEt@Inn@vAsive2o20!"
+	minioEndpoint := "miniodomain"
+	minioAccess := "miniokey"
+	minioSecret := "miniosecret"
 	minioSSL := true
 	minioRegion := "ap-southeast-1"
 
