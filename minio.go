@@ -1,11 +1,15 @@
 package minio
 
 import (
+	"bytes"
 	"fmt"
+	"html/template"
 	"image"
 	"image/jpeg"
 	"image/png"
 	"io"
+	"io/ioutil"
+	"log"
 	"math/rand"
 	"mime/multipart"
 	"os"
@@ -214,6 +218,27 @@ func (c *Client) ExistBucket(bucketName string) (bool, error) {
 		return false, err
 	}
 	return exists, nil
+}
+
+func (c *Client) SetBucketPublicPolicy(client *minio.Client, bucketName string) error {
+	var buf bytes.Buffer
+	bu, _ := ioutil.ReadFile("./policy/policy_public.json")
+	t, err := template.New("policy").Parse(string(bu))
+	if err != nil {
+		return err
+	}
+
+	if err := t.Execute(&buf, bucketName); err != nil {
+		return err
+	}
+
+	policy := buf.String()
+	if err := c.GetClient().SetBucketPolicy(bucketName, policy); err != nil {
+		return err
+	}
+	log.Println("create bucket with policy success")
+	fmt.Println(policy)
+	return nil
 }
 
 func (c *Client) GetPathImageFromURL(url string) string {
