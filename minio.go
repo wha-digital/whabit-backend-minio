@@ -220,7 +220,7 @@ func (c *Client) ExistBucket(bucketName string) (bool, error) {
 	return exists, nil
 }
 
-func (c *Client) SetBucketPublicPolicy(client *minio.Client, bucketName string) error {
+func (c *Client) SetBucketPublicPolicy(bucketName string) error {
 	var buf bytes.Buffer
 	bu, _ := ioutil.ReadFile("./policy/policy_public.json")
 	t, err := template.New("policy").Parse(string(bu))
