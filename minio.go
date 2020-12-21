@@ -156,8 +156,8 @@ func (c *Client) UploadMultipartFile(bucketName string, objectName string, file 
 	return nil
 }
 
-func (c *Client) UploadFileWithReader(bucketName string, objectName string, reader io.Reader, size int64, contentType string) (err error) {
-	if _, err = c.GetClient().PutObject(bucketName, objectName, reader, size, minio.PutObjectOptions{ContentType: contentType, ContentEncoding: "UTF-8"}); err != nil {
+func (c *Client) UploadFileWithReader(bucketName string, objectName string, reader io.Reader, size int64, contentType string, contentEncoding string) (err error) {
+	if _, err = c.GetClient().PutObject(bucketName, objectName, reader, size, minio.PutObjectOptions{ContentType: contentType, ContentEncoding: contentEncoding}); err != nil {
 		return err
 	}
 	return nil
