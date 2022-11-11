@@ -12,6 +12,7 @@ import (
 	"log"
 	"math/rand"
 	"mime/multipart"
+	"net/url"
 	"os"
 	"regexp"
 	"strconv"
@@ -241,19 +242,32 @@ func (c *Client) SetBucketPublicPolicy(bucketName string) error {
 	return nil
 }
 
-func (c *Client) GetPathImageFromURL(url string) string {
-	var pathImageRegex = regexp.MustCompile(c.MinioEndPoint + `\/[a-z\-]+\/`)
-	var path string
-	if url != "" {
-		if pathImageRegex.MatchString(url) {
-			loc := pathImageRegex.FindStringIndex(url)
+func (c *Client) GetObjectnameFromURL(link string) (string, string) {
+	var bucket string
+	var pathImageRegex = regexp.MustCompile(`\/[a-z\-]+\/`)
+
+	uri, err := url.Parse(link)
+	if err != nil {
+		return bucket, link
+	}
+
+	objectName := uri.Path
+	if objectName != "" {
+		if pathImageRegex.MatchString(objectName) {
+			loc := pathImageRegex.FindStringIndex(objectName)
 			if len(loc) > 0 {
-				path = url[loc[1]:]
+				bucket = strings.Trim(objectName[loc[0]:loc[1]], "/")
+				objectName = objectName[loc[1]:]
 			}
 		}
 	}
-	if path == "" {
-		return url
+	if strings.Contains(objectName, "?") {
+		spl := strings.Split(objectName, "?")
+		objectName = spl[0]
 	}
-	return path
+	if objectName == "" {
+		return bucket, link
+	}
+
+	return bucket, strings.Trim(objectName, "/")
 }
