@@ -253,7 +253,7 @@ func (c *Client) GetObjectnameFromURL(link string) (string, string) {
 
 	objectName := uri.Path
 	if objectName != "" {
-		if pathImageRegex.MatchString(objectName) {
+		if pathImageRegex.MatchString(objectName) && uri.Scheme != "" {
 			loc := pathImageRegex.FindStringIndex(objectName)
 			if len(loc) > 0 {
 				bucket = strings.Trim(objectName[loc[0]:loc[1]], "/")
