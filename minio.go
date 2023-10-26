@@ -19,7 +19,7 @@ import (
 	"strings"
 	"time"
 
-	helperModel "git.innovasive.co.th/backend/models"
+	helperModel "gitlab.whabitofficial.com/backend/models"
 	"github.com/minio/minio-go"
 	minioLib "github.com/minio/minio-go"
 )
