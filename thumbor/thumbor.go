@@ -52,15 +52,15 @@ func (t *Thumbor) NewImageLink(bucketName string, uri string) string {
 
 	if uri != "" {
 		if bucketName != "" {
-			if strings.Index(uri, "://") == -1 {
+			if !strings.Contains(uri, "://") {
 				uri = bucketName + "/" + uri
 			}
 
 		}
-		if string([]rune(uri)[0]) != "/" && strings.Index(uri, "://") == -1 {
+		if string([]rune(uri)[0]) != "/" && !strings.Contains(uri, "://") {
 			uri = "/" + uri
 		}
-		if strings.Index(uri, "://") == -1 {
+		if !strings.Contains(uri, "://") {
 			uri = t.MinioEndPoint + uri
 		}
 	}

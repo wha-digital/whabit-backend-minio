@@ -2,6 +2,7 @@ package minio
 
 import (
 	"bytes"
+	"context"
 	"fmt"
 	"html/template"
 	"image"
@@ -19,9 +20,9 @@ import (
 	"strings"
 	"time"
 
-	helperModel "gitlab.whabitofficial.com/backend/models"
-	"github.com/minio/minio-go"
-	minioLib "github.com/minio/minio-go"
+	minioLib "github.com/minio/minio-go/v7"
+	"github.com/minio/minio-go/v7/pkg/credentials"
+	helperModel "github.com/wha-digital/whabit-backend-models"
 )
 
 const (
@@ -39,7 +40,11 @@ type Client struct {
 
 func NewMinio(endpoint string, access string, secret string, ssl bool, region string) (*Client, error) {
 
-	min, err := minioLib.NewWithRegion(endpoint, access, secret, ssl, region)
+	min, err := minioLib.New(endpoint, &minioLib.Options{
+		Creds:  credentials.NewStaticV4(access, secret, ""),
+		Secure: ssl,
+		Region: region,
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -95,18 +100,21 @@ func CreateImageFile(img image.Image, format string, filename string, desc strin
 }
 
 /*
-	This function will generate path filename for upload minio
-	format
-		YYYYMMDD_id_[0-9]{10}_extension
+This function will generate path filename for upload minio
+format
 
-		- YYYY ปีแบบคริสศักราช
-		- MM เดือน
-		- DD วันที่
-		- id string
-		- [0-9]{10} เลข generate 0-9 จำนวน 10 ตัว
-		- extension
-	example
-		20200413-9026362617-example.jpg
+	YYYYMMDD_id_[0-9]{10}_extension
+
+	- YYYY ปีแบบคริสศักราช
+	- MM เดือน
+	- DD วันที่
+	- id string
+	- [0-9]{10} เลข generate 0-9 จำนวน 10 ตัว
+	- extension
+
+example
+
+	20200413-9026362617-example.jpg
 */
 func generateObjectName(foldername string, id string, extension string) string {
 	var date = strings.ReplaceAll(helperModel.NewDateFromTime(time.Now()).String(), "-", "")
@@ -151,14 +159,16 @@ func (c *Client) UploadMultipartFile(bucketName string, objectName string, file 
 
 	defer src.Close()
 
-	if _, err = c.GetClient().PutObject(bucketName, objectName, src, size, minio.PutObjectOptions{ContentType: contentType}); err != nil {
+	ctx := context.Background()
+	if _, err = c.GetClient().PutObject(ctx, bucketName, objectName, src, size, minioLib.PutObjectOptions{ContentType: contentType}); err != nil {
 		return err
 	}
 	return nil
 }
 
 func (c *Client) UploadFileWithReader(bucketName string, objectName string, reader io.Reader, size int64, contentType string, contentEncoding string) (err error) {
-	if _, err = c.GetClient().PutObject(bucketName, objectName, reader, size, minio.PutObjectOptions{ContentType: contentType, ContentEncoding: contentEncoding}); err != nil {
+	ctx := context.Background()
+	if _, err = c.GetClient().PutObject(ctx, bucketName, objectName, reader, size, minioLib.PutObjectOptions{ContentType: contentType, ContentEncoding: contentEncoding}); err != nil {
 		return err
 	}
 	return nil
@@ -174,7 +184,8 @@ func (c *Client) UploadFromFile(bucketName string, foldername string, pathFile s
 
 	defer src.Close()
 
-	if _, err := c.GetClient().FPutObject(bucketName, objectName, pathFile, minio.PutObjectOptions{}); err != nil {
+	ctx := context.Background()
+	if _, err := c.GetClient().FPutObject(ctx, bucketName, objectName, pathFile, minioLib.PutObjectOptions{}); err != nil {
 		return err
 	}
 	return nil
@@ -190,14 +201,16 @@ func (c *Client) UploadFromFilePDF(bucketName string, foldername string, pathFil
 
 	defer src.Close()
 
-	if _, err := c.GetClient().FPutObject(bucketName, objectName, pathFile, minio.PutObjectOptions{ContentType: "application/pdf", ContentEncoding: "UTF-8"}); err != nil {
+	ctx := context.Background()
+	if _, err := c.GetClient().FPutObject(ctx, bucketName, objectName, pathFile, minioLib.PutObjectOptions{ContentType: "application/pdf", ContentEncoding: "UTF-8"}); err != nil {
 		return err
 	}
 	return nil
 }
 
 func (c *Client) RemoveObject(bucketName string, objectName string) error {
-	if err := c.GetClient().RemoveObject(bucketName, objectName); err != nil {
+	ctx := context.Background()
+	if err := c.GetClient().RemoveObject(ctx, bucketName, objectName, minioLib.RemoveObjectOptions{}); err != nil {
 		return err
 	}
 	return nil
@@ -207,14 +220,16 @@ func (c *Client) CreateBucket(bucketName string, region string) error {
 	if region == "" {
 		region = MINIO_DEFAULT_REGION
 	}
-	if err := c.GetClient().MakeBucket(bucketName, region); err != nil {
+	ctx := context.Background()
+	if err := c.GetClient().MakeBucket(ctx, bucketName, minioLib.MakeBucketOptions{Region: region}); err != nil {
 		return err
 	}
 	return nil
 }
 
 func (c *Client) ExistBucket(bucketName string) (bool, error) {
-	exists, err := c.GetClient().BucketExists(bucketName)
+	ctx := context.Background()
+	exists, err := c.GetClient().BucketExists(ctx, bucketName)
 	if err != nil {
 		return false, err
 	}
@@ -234,7 +249,8 @@ func (c *Client) SetBucketPublicPolicy(bucketName string) error {
 	}
 
 	policy := buf.String()
-	if err := c.GetClient().SetBucketPolicy(bucketName, policy); err != nil {
+	ctx := context.Background()
+	if err := c.GetClient().SetBucketPolicy(ctx, bucketName, policy); err != nil {
 		return err
 	}
 	log.Println("create bucket with policy success")
